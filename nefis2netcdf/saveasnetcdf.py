@@ -37,7 +37,7 @@ def save_as_netcdf(nefdata, filename, exceptions=[], compression=False, debug=Fa
     dims = {}
 
     # first spatial dimension
-    spacelist = ['NMAX', 'KMAX', 'MMAX']
+    spacelist = ['NMAX', 'MMAX', 'KMAX']
     spacedims = []
     elmlist = nefdata.elmlist
 
@@ -46,6 +46,9 @@ def save_as_netcdf(nefdata, filename, exceptions=[], compression=False, debug=Fa
                 dim = int(nefdata.load_data(d))
                 dims[d[0].lower()+"dim"] = dim
                 spacedims.append(dim)
+                if d == 'KMAX':
+                    dims["zdim"] = dim + 1   # nb layer on zeta points
+                    spacedims.append(dim + 1)
             except KeyError:
                 pass
 
@@ -61,7 +64,10 @@ def save_as_netcdf(nefdata, filename, exceptions=[], compression=False, debug=Fa
     spacedims.append(dims['tdim'])
     dimlist = list(np.unique(dimlist))
     for k in spacedims:
-        dimlist.remove(k)
+        try:
+            dimlist.remove(k)
+        except ValueError:
+            pass
 
     for ii, dim in enumerate(dimlist):
         dims['dim'+str(ii)] = dim

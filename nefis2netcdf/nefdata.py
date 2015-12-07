@@ -332,6 +332,7 @@ class NefData(object):
         #        info['dims'] = info['dims'][[1,2,0]]  # update dims to match
 
         return elm_data
-       
+
+
 
 
